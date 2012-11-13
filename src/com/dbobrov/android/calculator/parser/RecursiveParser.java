@@ -55,7 +55,7 @@ public class RecursiveParser {
             p1.pos = p2.pos;
             p1.value = p1.value + p2.value;
         }
-        if (Math.abs(p1.value) > 1e11) {
+        if (Math.abs(p1.value) > 1e10) {
             throw new ParseException("Overflow");
         }
         return p1;
@@ -117,7 +117,7 @@ public class RecursiveParser {
             p1.pos = p2.pos;
             p1.value = p1.value * p2.value;
         }
-        if (Math.abs(p1.value) > 1e11) {
+        if (Math.abs(p1.value) > 1e10) {
             throw new ParseException("Overflow");
         }
         return p1;

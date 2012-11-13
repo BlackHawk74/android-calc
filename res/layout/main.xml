@@ -8,7 +8,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fldExpr"
-            android:hint="@string/enter_expression" android:layout_marginTop="5dp"/>
+            android:hint="@string/enter_expression" android:layout_marginTop="5dp" android:ellipsize="end"
+            android:enabled="true" android:singleLine="true"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
