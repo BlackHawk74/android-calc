@@ -5,7 +5,6 @@ package com.dbobrov.android.calculator.parser;
  * User: blackhawk
  * Date: 11.11.12
  * Time: 21:44
- * To change this template use File | Settings | File Templates.
  */
 public class ParseException extends Exception {
     public ParseException() {

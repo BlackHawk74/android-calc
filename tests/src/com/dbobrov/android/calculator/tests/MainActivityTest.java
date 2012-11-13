@@ -8,7 +8,6 @@ import com.dbobrov.android.calculator.MainActivity;
  * User: blackhawk
  * Date: 11.11.12
  * Time: 18:40
- * To change this template use File | Settings | File Templates.
  */
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 

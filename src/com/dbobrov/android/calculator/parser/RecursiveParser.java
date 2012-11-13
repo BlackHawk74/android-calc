@@ -11,7 +11,7 @@ import java.util.Locale;
  * Time: 19:51
  */
 
-public class RecursiveDescent {
+public class RecursiveParser {
     private final String expressionString;
 
     private static class ParseHolder {
@@ -24,11 +24,11 @@ public class RecursiveDescent {
         }
     }
 
-    public RecursiveDescent(String expression) {
+    public RecursiveParser(String expression) {
         this.expressionString = expression.replaceAll(" ", "");
     }
 
-    public double parse() throws ParseException {
+    public String getResult() throws ParseException {
         try {
             ParseHolder holder = parseExpr(0);
             if (holder.pos != expressionString.length()) {
@@ -131,14 +131,14 @@ public class RecursiveDescent {
                     p1.pos++;
                     return p1;
                 }
-                throw new ParseException("No closing bracket");
+                throw new ParseException("Invalid expression");
             case '-':
                 ParseHolder p2 = parseFactor(pos + 1);
                 p2.value *= -1.0;
                 return p2;
             default:
                 char c = expressionString.charAt(pos);
-                if (!(c >= '0' && c <= '9')) {
+                if (!Character.isDigit(c)) {
                     throw new ParseException("Invalid expression");
                 }
                 return tryParseNumber(pos);
@@ -150,7 +150,7 @@ public class RecursiveDescent {
         int i;
         for (i = pos; i < expressionString.length(); ++i) {
             char c = expressionString.charAt(i);
-            if (c >= '0' && c <= '9') continue;
+            if (Character.isDigit(c)) continue;
             if (c == '.') {
                 if (dotPassed) {
                     throw new ParseException("Invalid expression");
@@ -161,7 +161,10 @@ public class RecursiveDescent {
             break;
         }
         double val = Double.parseDouble(expressionString.substring(pos, i));
-        if (Math.abs(val) < 1e-5) {
+        if (Math.abs(val) < 1e-10) {
+            if (val != 0.0) {
+                throw new ParseException("Underflow");
+            }
             val = 0.0;
         } else if (Math.abs(val) > 1e10) {
             throw new ParseException("Overflow");
@@ -171,8 +174,7 @@ public class RecursiveDescent {
 
     private static final DecimalFormat FORMAT = new DecimalFormat("#.#####", new DecimalFormatSymbols(Locale.US));
 
-    private static double round(double d) {
-        String s = FORMAT.format(d);
-        return Double.valueOf(s);
+    private static String round(double d) {
+        return FORMAT.format(d);
     }
 }

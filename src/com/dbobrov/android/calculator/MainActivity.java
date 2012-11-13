@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.dbobrov.android.calculator.parser.ParseException;
-import com.dbobrov.android.calculator.parser.RecursiveDescent;
+import com.dbobrov.android.calculator.parser.RecursiveParser;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
@@ -30,8 +30,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.calculate:
                 try {
-                    double res = calculateResult();
-                    textView.setText(Double.toString(res));
+                    String res = calculateResult();
+                    textView.setText(res);
                 } catch (ParseException e) {
                     textView.setText(e.getMessage());
                 }
@@ -39,9 +39,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private double calculateResult() throws ParseException {
+    private String calculateResult() throws ParseException {
         String expr = editText.getText().toString();
-        RecursiveDescent parser = new RecursiveDescent(expr);
-        return parser.parse();
+        RecursiveParser parser = new RecursiveParser(expr);
+        return parser.getResult();
     }
 }

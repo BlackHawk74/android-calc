@@ -2,65 +2,64 @@ package com.dbobrov.android.calculator.tests;
 
 import android.test.AndroidTestCase;
 import com.dbobrov.android.calculator.parser.ParseException;
-import com.dbobrov.android.calculator.parser.RecursiveDescent;
+import com.dbobrov.android.calculator.parser.RecursiveParser;
 
 /**
  * Created with IntelliJ IDEA.
  * User: blackhawk
  * Date: 11.11.12
  * Time: 22:58
- * To change this template use File | Settings | File Templates.
  */
 public class ParserTests extends AndroidTestCase {
     public void testSum() {
-        RecursiveDescent parser = new RecursiveDescent("1+1");
+        RecursiveParser parser = new RecursiveParser("1+1");
         try {
-            assertEquals(parser.parse(), 2.0, 1e-6);
+            assertEquals(parser.getResult(), "2");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testSub() {
-        RecursiveDescent parser = new RecursiveDescent("0.001-1.0001");
+        RecursiveParser parser = new RecursiveParser("0.001-1.0001");
         try {
-            assertEquals(parser.parse(), 0.001 - 1.0001, 1e-6);
+            assertEquals(parser.getResult(), "-0.9991");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testSubLeftAssoc() {
-        RecursiveDescent parser = new RecursiveDescent("1-1-1");
+        RecursiveParser parser = new RecursiveParser("1-1-1");
         try {
-            assertEquals(parser.parse(), -1.0, 1e-6);
+            assertEquals(parser.getResult(), "-1");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testMul() {
-        RecursiveDescent parser = new RecursiveDescent("-1.5*-100500");
+        RecursiveParser parser = new RecursiveParser("-1.5*-100500");
         try {
-            assertEquals(parser.parse(), -1.5 * -100500.0, 1e-6);
+            assertEquals(parser.getResult(), "150750");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testDiv() {
-        RecursiveDescent parser = new RecursiveDescent("15/5/3");
+        RecursiveParser parser = new RecursiveParser("15/5/3");
         try {
-            assertEquals(parser.parse(), 1.0, 1e-6);
+            assertEquals(parser.getResult(), "1");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testDivZero() {
-        RecursiveDescent parser = new RecursiveDescent("1/0.0000001");
+        RecursiveParser parser = new RecursiveParser("1/0.0000001");
         try {
-            double val = parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assert false;
@@ -70,27 +69,27 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testBrackets() {
-        RecursiveDescent parser = new RecursiveDescent("1-(1-1)");
+        RecursiveParser parser = new RecursiveParser("1-(1-1)");
         try {
-            assertEquals(parser.parse(), 1.0, 1e-6);
+            assertEquals(parser.getResult(), "1");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testMultiple() {
-        RecursiveDescent parser = new RecursiveDescent("10+10-10*0/0.05+0.004/2-(20-10/2)*2");
+        RecursiveParser parser = new RecursiveParser("10+10-10*0/0.05+0.004/2-(20-10/2)*2");
         try {
-            assertEquals(parser.parse(), -9.998, 1e-6);
+            assertEquals(parser.getResult(), "-9.998");
         } catch (ParseException e) {
             assert false;
         }
     }
 
     public void testInvalidExpression() {
-        RecursiveDescent parser = new RecursiveDescent("()");
+        RecursiveParser parser = new RecursiveParser("()");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
@@ -98,9 +97,9 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testInvalidBracketSequences() {
-        RecursiveDescent parser = new RecursiveDescent("1-(1-1");
+        RecursiveParser parser = new RecursiveParser("1-(1-1");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
@@ -108,9 +107,9 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testInvalidNumbers() {
-        RecursiveDescent parser = new RecursiveDescent("10000000*100000000000");
+        RecursiveParser parser = new RecursiveParser("10000000*100000000000");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Overflow");
@@ -118,9 +117,9 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testInvalidExpression1() {
-        RecursiveDescent parser = new RecursiveDescent("12-3+");
+        RecursiveParser parser = new RecursiveParser("12-3+");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
@@ -128,9 +127,9 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testDoubleDots() {
-        RecursiveDescent parser = new RecursiveDescent("1.2.3");
+        RecursiveParser parser = new RecursiveParser("1.2.3");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
@@ -138,12 +137,41 @@ public class ParserTests extends AndroidTestCase {
     }
 
     public void testEmpty() {
-        RecursiveDescent parser = new RecursiveDescent("");
+        RecursiveParser parser = new RecursiveParser("");
         try {
-            parser.parse();
+            parser.getResult();
             assert false;
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
+        }
+    }
+
+
+    public void testDiv1() {
+        RecursiveParser parser = new RecursiveParser("1/(10 - 1000000000/999999999)");
+        try {
+            assertEquals(parser.getResult(), "0.11111");
+        } catch (ParseException e) {
+            assert false;
+        }
+    }
+
+    public void testDiv2() {
+        RecursiveParser parser = new RecursiveParser("1/(10 - 10000000000/999999999)");
+        try {
+            assertEquals(parser.getResult(), "-99999991.72596");
+        } catch (ParseException e) {
+            assert false;
+        }
+    }
+
+    public void testUnderflow() {
+        RecursiveParser parser = new RecursiveParser("0.00000000001");
+        try {
+            parser.getResult();
+            assert false;
+        } catch (ParseException e) {
+            assertEquals(e.getMessage(), "Underflow");
         }
     }
 }
