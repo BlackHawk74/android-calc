@@ -16,7 +16,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "2");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -25,7 +25,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "-0.9991");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -34,16 +34,16 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "-1");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
     public void testMul() {
-        RecursiveParser parser = new RecursiveParser("-1.5*-100500");
+        RecursiveParser parser = new RecursiveParser("-1.5*(-100500)");
         try {
             assertEquals(parser.getResult(), "150750");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -52,18 +52,16 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "1");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
     public void testDivZero() {
-        RecursiveParser parser = new RecursiveParser("1/0.0000001");
+        RecursiveParser parser = new RecursiveParser("1/0");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
-            assert false;
-        } catch (ArithmeticException e) {
             assertEquals(e.getMessage(), "Division by zero");
         }
     }
@@ -73,7 +71,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "1");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -82,7 +80,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "-9.998");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -90,7 +88,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("()");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
         }
@@ -100,7 +98,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("1-(1-1");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
         }
@@ -110,7 +108,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("10000000*100000000000");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Overflow");
         }
@@ -120,7 +118,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("12-3+");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
         }
@@ -130,7 +128,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("1.2.3");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
         }
@@ -140,7 +138,7 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Invalid expression");
         }
@@ -152,7 +150,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "0.11111");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -161,7 +159,7 @@ public class ParserTests extends AndroidTestCase {
         try {
             assertEquals(parser.getResult(), "-99999991.72596");
         } catch (ParseException e) {
-            assert false;
+            assertTrue(false);
         }
     }
 
@@ -169,9 +167,37 @@ public class ParserTests extends AndroidTestCase {
         RecursiveParser parser = new RecursiveParser("0.00000000001");
         try {
             parser.getResult();
-            assert false;
+            assertTrue(false);
         } catch (ParseException e) {
             assertEquals(e.getMessage(), "Underflow");
+        }
+    }
+
+    public void testNumberWithEndingDot() {
+        RecursiveParser parser = new RecursiveParser("1.");
+        try {
+            assertEquals(parser.getResult(), "1");
+        } catch (ParseException e) {
+            assertTrue(false);
+        }
+    }
+
+
+    public void testUnaryMinusWithoutBrackets() {
+        RecursiveParser parser = new RecursiveParser("-1 - -1");
+        try {
+            assertEquals(parser.getResult(), "0");
+        } catch (ParseException e) {
+            assertTrue(false);
+        }
+    }
+
+    public void testIgnoreSpaces() {
+        RecursiveParser parser = new RecursiveParser("1 000 000");
+        try {
+            assertEquals(parser.getResult(), "1000000");
+        } catch (ParseException e) {
+            assertTrue(false);
         }
     }
 }
